@@ -14,7 +14,7 @@ const redirectUrl = params.get('redirectUrl') || '../';
 // > Part C: If user directly navigated to /auth, but we have a user, go back
 // (they need to sign out first before coming here)
 //      - get the user
-if (user) location.replace('/');
+if (user) location.replace(redirectUrl);
 const user = getUser();
 //      - replace location with redirectUrl
 
@@ -76,15 +76,14 @@ authForm.addEventListener('submit', async (e) => {
     const formData = new FormData(authForm);
     //      - call "authType.action" passing in the email and password from
     //        the form data and assign to response variable
-    let response = null;
-
-    if (authType === signInType) {
-        response = await signInUser(formData.get('email'), formData.get('password'));
-    } else {
-        response = await signUpUser(formData.get('email'), formData.get('password'));
-    }
-
+    const response = await authType.action(formData.get('email'), formData.get('password'));
     const error = response.error;
+
+    // if (authType === signInType) {
+    //     response = await signInUser(formData.get('email'), formData.get('password'));
+    // } else {
+    //     response = await signUpUser(formData.get('email'), formData.get('password'));
+    // }
 
     if (error) {
         // display the error and reset the button to be active
